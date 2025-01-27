@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motivation Generator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: #333;
+      overflow: hidden;
+      transition: background 0.5s ease-in-out;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 600px;
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+      font-size: 3rem;
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+    p {
+      font-size: 1.4rem;
+      color: #555;
+      margin: 1rem 0;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+    button {
+      background: #ff6f61;
+      color: white;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255, 111, 97, 0.3);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #ff3b2e;
+      box-shadow: 0 8px 20px rgba(255, 59, 46, 0.4);
+      transform: scale(1.05);
+    }
+    .quote-category {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .quote-category button {
+      background: #6fa3ef;
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 4px 10px rgba(111, 163, 239, 0.3);
+    }
+    .quote-category button:hover {
+      background: #4e88d1;
+      box-shadow: 0 6px 15px rgba(78, 136, 209, 0.4);
+    }
+    .history {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(245, 245, 245, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .history h3 {
+      margin-bottom: 1rem;
+      color: #444;
+    }
+    .history p {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Your Daily Motivation</h1>
+    <p id="quote">Click the button to get inspired!</p>
+    <button onclick="generateQuote()">Generate Quote</button>
+    <div class="quote-category">
+      <button onclick="filterQuotes('success')">Success</button>
+      <button onclick="filterQuotes('happiness')">Happiness</button>
+      <button onclick="filterQuotes('general')">General</button>
+    </div>
+    <div class="history">
+      <h3>Quote History</h3>
+      <div id="history"></div>
+    </div>
+  </div>
+
+  <script>
+    const quotes = [
+      { text: "Believe you can and you're halfway there.", category: "success" },
+      { text: "The only way to do great work is to love what you do.", category: "success" },
+      { text: "Success is not the key to happiness. Happiness is the key to success.", category: "happiness" },
+      { text: "Don’t watch the clock; do what it does. Keep going.", category: "success" },
+      { text: "You are never too old to set another goal or to dream a new dream.", category: "general" },
+      { text: "Act as if what you do makes a difference. It does.", category: "general" },
+      { text: "Happiness is not by chance, but by choice.", category: "happiness" },
+      { text: "The secret of getting ahead is getting started.", category: "general" },
+      { text: "Success usually comes to those who are too busy to be looking for it.", category: "success" },
+      { text: "Opportunities don't happen, you create them.", category: "success" },
+      { text: "Your time is limited, don't waste it living someone else's life.", category: "success" },
+      { text: "The purpose of our lives is to be happy.", category: "happiness" },
+      { text: "Life is what happens when you're busy making other plans.", category: "general" },
+      { text: "Get busy living or get busy dying.", category: "general" },
+      { text: "You have within you right now, everything you need to deal with whatever the world can throw at you.", category: "general" },
+      { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", category: "general" },
+      { text: "Happiness is when what you think, what you say, and what you do are in harmony.", category: "happiness" },
+      { text: "Spread love everywhere you go. Let no one ever come to you without leaving happier.", category: "happiness" },
+      { text: "When you arise in the morning, think of what a privilege it is to be alive, to think, to enjoy, to love.", category: "happiness" },
+      { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.", category: "general" },
+      { text: "It is during our darkest moments that we must focus to see the light.", category: "general" },
+      { text: "The best way to predict your future is to create it.", category: "success" },
+      { text: "In the middle of every difficulty lies opportunity.", category: "success" },
+      { text: "Start where you are. Use what you have. Do what you can.", category: "success" },
+      { text: "Don't let yesterday take up too much of today.", category: "general" },
+      { text: "If you can dream it, you can achieve it.", category: "general" },
+      { text: "You define your own life. Don’t let other people write your script.", category: "general" },
+      { text: "Success is how high you bounce when you hit bottom.", category: "success" },
+      { text: "Happiness depends upon ourselves.", category: "happiness" },
+      { text: "Happiness is a direction, not a place.", category: "happiness" },
+      { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", category: "general" },
+      { text: "Do not wait; the time will never be 'just right.'", category: "success" },
+      { text: "Life is made of ever so many partings welded together.", category: "general" },
+      { text: "You will face many defeats in life, but never let yourself be defeated.", category: "general" },
+      { text: "Happiness is not something ready-made. It comes from your own actions.", category: "happiness" },
+      { text: "Do what you can, with what you have, where you are.", category: "success" },
+      { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "general" },
+      { text: "Your life does not get better by chance, it gets better by change.", category: "general" },
+      { text: "Success is not how high you have climbed, but how you make a positive difference to the world.", category: "success" },
+      { text: "People who are crazy enough to think they can change the world, are the ones who do.", category: "success" },
+      { text: "Happiness is the art of never holding in your mind the memory of any unpleasant thing that has passed.", category: "happiness" },
+      { text: "To be happy, we must not be too concerned with others.", category: "happiness" },
+      { text: "The way to get started is to quit talking and begin doing.", category: "success" },
+      { text: "It always seems impossible until it's done.", category: "success" },
+      { text: "Turn your wounds into wisdom.", category: "general" },
+      { text: "If you want to be happy, set a goal that commands your thoughts, liberates your energy, and inspires your hopes.", category: "happiness" }
+    ];
+
+    const colors = [
+      "#ff9a9e", "#fad0c4", "#fbc2eb", "#a1c4fd", "#c2e9fb", "#d4fc79", "#96e6a1",
+      "#f5f7fa", "#e0c3fc", "#8ec5fc", "#e6dee9", "#ffd3a5", "#a8edea", "#cfd9df"
+    ];
+
+    const historyElement = document.getElementById('history');
+
+    function addToHistory(quote) {
+      const quoteElement = document.createElement('p');
+      quoteElement.textContent = quote;
+      historyElement.prepend(quoteElement);
+      if (historyElement.children.length > 10) {
+        historyElement.removeChild(historyElement.lastChild);
+      }
+    }
+
+    function generateQuote() {
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)].text;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      document.getElementById('quote').textContent = randomQuote;
+      document.body.style.background = `linear-gradient(135deg, ${color}, #ffffff)`;
+      addToHistory(randomQuote);
+    }
+
+    function filterQuotes(category) {
+      const filteredQuotes = quotes.filter(quote => quote.category === category);
+      const randomQuote = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)].text;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      document.getElementById('quote').textContent = randomQuote;
+      document.body.style.background = `linear-gradient(135deg, ${color}, #ffffff)`;
+      addToHistory(randomQuote);
+    }
+
+    // Utility function to clear history
+    function clearHistory() {
+      historyElement.innerHTML = '';
+    }
+
+    // Automatically display a random quote on load
+    window.onload = generateQuote;
+  </script>
+</body>
+</html>
