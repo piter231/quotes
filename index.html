@@ -200,13 +200,10 @@
       document.body.style.background = `linear-gradient(135deg, ${color}, #ffffff)`;
       addToHistory(randomQuote);
     }
-
-    // Utility function to clear history
     function clearHistory() {
       historyElement.innerHTML = '';
     }
 
-    // Automatically display a random quote on load
     window.onload = generateQuote;
   </script>
 </body>
